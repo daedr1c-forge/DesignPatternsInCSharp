@@ -1,9 +1,7 @@
-﻿using static DesignPatterns.SOLID.OCP;
-
-namespace DesignPatterns.SOLID;
+﻿namespace DesignPatterns.SOLID;
 
 /// <summary>
-/// Open-Closed Principle
+/// OCP (Open-Closed Principle)
 /// </summary>
 /// The Open/Closed Principle (OCP) is the “O” in the SOLID principles and is one of the most fundamental guidelines for creating robust,
 /// flexible software systems. The principle states that software entities (such as classes,
@@ -122,7 +120,7 @@ public static class OCP
 
     public static void Run()
     {
-        Console.WriteLine("Start -> Open-Closed Principle");
+        Console.WriteLine("Start -> OCP (Open-Closed Principle)");
 
         var apple = new Product("Apple", Color.Green, Size.Small);
         var tree = new Product("Tree", Color.Green, Size.Large);
@@ -151,6 +149,6 @@ public static class OCP
             Console.WriteLine($" - {p.Name} is big and blue");
         }
 
-        Console.WriteLine("Finish -> Open-Closed Principle");
+        Console.WriteLine("Finish -> OCP (Open-Closed Principle)");
     }
 }
