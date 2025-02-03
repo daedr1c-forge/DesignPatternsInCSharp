@@ -6,10 +6,14 @@ namespace DesignPatterns
     {
         static void Main(string[] args)
         {
-            //SOLID Design Principles
+            ///SOLID Design Principles
+            ///SOLID principles make it easy for a developer to write easily extendable code and avoid common coding errors.
+            ///These principles were introduced by Robert C.Martin, and they have become a fundamental part of object-oriented programming.
+            ///In the context of .NET development, adhering to SOLID principles can lead to more modular, flexible, and maintainable code.
             SRP.Run();
             OCP.Run();
             LSP.Run();
+            ISP.Run();
         }
     }
 }
