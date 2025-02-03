@@ -92,8 +92,15 @@ public static class SRP
         var p = new Persistence();
         var fileName = @"c:\temp\journal.txt";
 
-        p.SaveToFile(j, fileName);
-        Process.Start(fileName);
+        try
+        {
+            p.SaveToFile(j, fileName);
+            Process.Start(fileName);
+        }
+        catch
+        {
+            Console.WriteLine("Folder not found");
+        }
 
         Console.WriteLine("Finish -> SRP (Single Responsibility Principle)");
     }

@@ -8,6 +8,7 @@ namespace DesignPatterns
         {
             //SOLID Design Principles
             SRP.Run();
+            OCP.Run();
         }
     }
 }
