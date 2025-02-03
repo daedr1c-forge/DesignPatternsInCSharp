@@ -3,7 +3,8 @@
 /// <summary>
 /// OCP (Open-Closed Principle)
 /// </summary>
-/// The Open/Closed Principle (OCP) is the “O” in the SOLID principles and is one of the most fundamental guidelines for creating robust,
+/// 
+///     The Open/Closed Principle (OCP) is the “O” in the SOLID principles and is one of the most fundamental guidelines for creating robust,
 /// flexible software systems. The principle states that software entities (such as classes,
 /// modules, and functions) should be open for extension but closed for modification.
 /// In simple terms, you should be able to add new functionality to a class without changing its existing code.

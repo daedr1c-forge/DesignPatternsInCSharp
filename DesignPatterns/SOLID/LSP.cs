@@ -3,8 +3,9 @@
 /// <summary>
 /// LSP (Liskov Substitution Principle)
 /// </summary>
+/// 
 /// Barbara Liskov, who introduced this principle, states:
-/// Objects of a superclass should be replaceable with objects of a subclass without affecting the functionality of the program
+///     Objects of a superclass should be replaceable with objects of a subclass without affecting the functionality of the program
 /// Or with another word “If S is a subtype of T, then objects of type T in a program
 /// can be replaced with objects of type S without altering the desirable properties of the program."
 /// In simpler words, if you have a base class and its derived classes,

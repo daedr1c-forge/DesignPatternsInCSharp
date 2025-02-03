@@ -5,6 +5,7 @@ namespace DesignPatterns.SOLID;
 /// <summary>
 /// SRP (Single Responsibility Principle)
 /// </summary>
+/// 
 ///     The Single Responsibility Principle is one of the SOLID principles of object-oriented design.
 /// At its core, SRP advocates that a class should have only one reason to change. In simpler terms,
 /// a class should encapsulate a single responsibility or task. This principle helps in keeping classes focused,
