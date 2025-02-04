@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using static DesignPatterns.CreationalDesignPatterns.Builder;
 
 namespace DesignPatterns.CreationalDesignPatterns;
 
@@ -215,6 +216,55 @@ public static class Builder
         }
     }
 
+    ///////////////////////////
+    /// Functional Builder ////
+    ///////////////////////////
+
+    public class Employee
+    {
+        public string Name, Position;
+    }
+
+    public abstract class FunctionalBuilder<TSubject, TSefl>
+        where TSefl : FunctionalBuilder<TSubject, TSefl>
+        where TSubject : new()
+    {
+        private readonly List<Func<Employee, Employee>> _actions = new List<Func<Employee, Employee>>();
+
+        public TSefl Do(Action<Employee> action) => AddAction(action);
+
+        public Employee Build() => _actions.Aggregate(new Employee(), (p, f) => f(p));
+
+        private TSefl AddAction(Action<Employee> action)
+        {
+            _actions.Add(p => { action(p); return p; });
+            return (TSefl)this;
+        }
+    }
+
+    public sealed class EmployeeBuilder
+        : FunctionalBuilder<Employee, EmployeeBuilder>
+    {
+        public EmployeeBuilder Called(string name)
+            => Do(p => p.Name = name);
+    }
+
+    //public sealed class EmployeeBuilder
+    //{
+    //    private readonly List<Func<Employee, Employee>> _actions = new List<Func<Employee, Employee>>();
+
+    //    public EmployeeBuilder Called(string name) => Do(p => p.Name = name);
+
+    //    public EmployeeBuilder Do(Action<Employee> action) => AddAction(action);
+
+    //    public Employee Build() => _actions.Aggregate(new Employee(), (p, f) => f(p));
+
+    //    private EmployeeBuilder AddAction(Action<Employee> action)
+    //    {
+    //        _actions.Add(p => { action(p); return p; });
+    //        return this;
+    //    }
+    //}
 
     public static void Run()
     {
@@ -243,6 +293,19 @@ public static class Builder
             .WithWheels(18)             //IBuildCar
             .Build();
 
+        ////////////////////////////////////////
+
+        var employee = new EmployeeBuilder()
+                        .Called("Sarah")
+                        .WorksAs("Developer")
+                        .Build();
+
         Console.WriteLine("Start -> Builder");
     }
+}
+
+public static class EmployeeBuilderExtensions
+{
+    public static EmployeeBuilder WorksAs(this EmployeeBuilder builder, string position)
+        => builder.Do(p => p.Position = position);
 }
