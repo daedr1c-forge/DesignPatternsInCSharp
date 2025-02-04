@@ -266,6 +266,93 @@ public static class Builder
     //    }
     //}
 
+    //////////////////////////
+    ///  Faceted Builder /////
+    //////////////////////////
+
+    public class Member
+    {
+        //address
+        public string StreetAddress, Postcode, City;
+
+        public string CompanyName, Position;
+
+        public int AnnualIncome;
+
+        public override string ToString()
+        {
+            return $"{nameof(StreetAddress)}: {StreetAddress}, {nameof(Postcode)}: {Postcode}, " +
+                $"{nameof(CompanyName)}: {CompanyName}, {nameof(Position)} : {Position}, " +
+                $"{nameof(AnnualIncome)}: {AnnualIncome}";
+        }
+    }
+
+    public class MemberBuilder // facade
+    {
+        // reference!
+        protected Member member = new Member();
+
+        public MemberJobBuilder Works => new MemberJobBuilder(member);
+        public MemberAddressBuilder Address => new MemberAddressBuilder(member);
+
+        public static implicit operator Member(MemberBuilder mb)
+        {
+            return mb.member;
+        }
+    }
+
+    public class MemberJobBuilder : MemberBuilder
+    {
+        public MemberJobBuilder(Member member)
+        {
+            this.member = member;
+        }
+
+        public MemberJobBuilder At(string companyName)
+        {
+            member.CompanyName = companyName;
+            return this;
+        }
+
+        public MemberJobBuilder AsA(string position)
+        {
+            member.Position = position;
+            return this;
+        }
+
+        public MemberJobBuilder Earning(int amount)
+        {
+            member.AnnualIncome = amount;
+            return this;
+        }
+    }
+
+    public class MemberAddressBuilder : MemberBuilder
+    {
+        public MemberAddressBuilder(Member member)
+        {
+            this.member = member;
+        }
+
+        public MemberAddressBuilder At(string streetAddress)
+        {
+            member.StreetAddress = streetAddress;
+            return this;
+        }
+
+        public MemberAddressBuilder WithPostcode(string postcode)
+        {
+            member.Postcode = postcode;
+            return this;
+        }
+
+        public MemberAddressBuilder In(string city)
+        {
+            member.City = city;
+            return this;
+        }
+    }
+
     public static void Run()
     {
         Console.WriteLine("Start -> Builder");
@@ -286,19 +373,33 @@ public static class Builder
 
         Console.WriteLine(me);
 
-        ////////////////////////////////////////
+        //////////////////////////////////////
 
         var car = CarBuilder.Create()   //ISpecifyCarType
             .OfType(CarType.Crossover)  //ISpecifyWheelSize
             .WithWheels(18)             //IBuildCar
             .Build();
 
-        ////////////////////////////////////////
+        //////////////////////////////////////
 
         var employee = new EmployeeBuilder()
                         .Called("Sarah")
                         .WorksAs("Developer")
                         .Build();
+
+        //////////////////////////////////////
+
+        var mb = new MemberBuilder();
+
+        Member member = mb
+            .Address.At("123 London Road")
+                .In("London")
+                .WithPostcode("SW12Ac")
+            .Works.At("Company Name")
+                .AsA("Postion Name")
+                .Earning(3000);
+
+        Console.WriteLine(member);
 
         Console.WriteLine("Start -> Builder");
     }
