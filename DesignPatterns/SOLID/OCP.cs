@@ -1,4 +1,7 @@
-﻿namespace DesignPatterns.SOLID;
+﻿using System.Net.NetworkInformation;
+using System;
+
+namespace DesignPatterns.SOLID;
 
 /// <summary>
 /// OCP (Open-Closed Principle)
@@ -153,3 +156,139 @@ public static class OCP
         Console.WriteLine("Finish -> OCP (Open-Closed Principle)");
     }
 }
+
+// Open-Closed Principle
+// The Open-Closed Principle(OCP) states that classes should be open for extension but closed
+// for modification.This means that you should be able to add new functionality without changing the existing code.
+
+// Violation of OCP
+// Initially, the filtering logic is implemented in a way that requires modifying the ProductFilter class
+// whenever a new filtering criterion is needed.
+
+// public enum Color { Red, Green, Blue }
+// public enum Size { Small, Medium, Large }
+
+// public class Product
+// {
+//    public string Name;
+//    public Color Color;
+//    public Size Size;
+
+//    public Product(string name, Color color, Size size)
+//    {
+//        Name = name;
+//        Color = color;
+//        Size = size;
+//    }
+// }
+
+// public class ProductFilter
+// {
+//    public IEnumerable<Product> FilterByColor(IEnumerable<Product> products, Color color)
+//    {
+//        foreach (var p in products)
+//            if (p.Color == color)
+//                yield return p;
+//    }
+
+//    public IEnumerable<Product> FilterBySize(IEnumerable<Product> products, Size size)
+//    {
+//        foreach (var p in products)
+//            if (p.Size == size)
+//                yield return p;
+//    }
+
+//    public IEnumerable<Product> FilterBySizeAndColor(IEnumerable<Product> products, Size size, Color color)
+//    {
+//        foreach (var p in products)
+//            if (p.Size == size && p.Color == color)
+//                yield return p;
+//    }
+// }
+
+// Issue
+// Every time a new filtering condition is needed, the ProductFilter class must be modified.
+// This violates the Open-Closed Principle because existing code is being changed.
+// Applying OCP Using Specification Pattern
+// To adhere to the Open-Closed Principle, we introduce the Specification Pattern using interfaces.
+
+// Step 1: Define the Specification Interface
+
+// public interface ISpecification<T>
+// {
+//    bool IsSatisfied(T item);
+// }
+// Step 2: Create a Generic Filter
+
+// public interface IFilter<T>
+// {
+//    IEnumerable<T> Filter(IEnumerable<T> items, ISpecification<T> spec);
+// }
+
+// public class BetterFilter : IFilter<Product>
+// {
+//    public IEnumerable<Product> Filter(IEnumerable<Product> items, ISpecification<Product> spec)
+//    {
+//        foreach (var item in items)
+//            if (spec.IsSatisfied(item))
+//                yield return item;
+//    }
+// }
+
+// Step 3: Create Specific Filtering Criteria
+
+// public class ColorSpecification : ISpecification<Product>
+// {
+//    private Color color;
+//    public ColorSpecification(Color color) { this.color = color; }
+
+//    public bool IsSatisfied(Product item) => item.Color == color;
+// }
+
+// public class SizeSpecification : ISpecification<Product>
+// {
+//    private Size size;
+//    public SizeSpecification(Size size) { this.size = size; }
+
+//    public bool IsSatisfied(Product item) => item.Size == size;
+// }
+// Step 4: Combine Specifications
+// Using the AND condition for multiple filters:
+
+// public class AndSpecification<T> : ISpecification<T>
+// {
+//    private ISpecification<T> first, second;
+
+//    public AndSpecification(ISpecification<T> first, ISpecification<T> second)
+//    {
+//        this.first = first;
+//        this.second = second;
+//    }
+
+//    public bool IsSatisfied(T item) => first.IsSatisfied(item) && second.IsSatisfied(item);
+// }
+
+//Step 5: Usage Example
+
+// var apple = new Product("Apple", Color.Green, Size.Small);
+// var tree = new Product("Tree", Color.Green, Size.Large);
+// var house = new Product("House", Color.Blue, Size.Large);
+
+// var products = new List<Product> { apple, tree, house };
+
+// var bf = new BetterFilter();
+// Console.WriteLine("Green products:");
+// foreach (var p in bf.Filter(products, new ColorSpecification(Color.Green)))
+//    Console.WriteLine($" - {p.Name} is green");
+
+// Console.WriteLine("Large and Blue products:");
+// foreach (var p in bf.Filter(products, new AndSpecification<Product>(
+//    new SizeSpecification(Size.Large),
+//    new ColorSpecification(Color.Blue))))
+// {
+//    Console.WriteLine($" - {p.Name} is large and blue");
+// }
+// Advantages
+// ✅ New filtering criteria can be added without modifying existing code.
+// ✅ Adheres to the Open-Closed Principle by enabling extensions through new classes rather than modifying the BetterFilter.
+// This demonstrates how OCP is implemented effectively using the Specification Pattern. 
