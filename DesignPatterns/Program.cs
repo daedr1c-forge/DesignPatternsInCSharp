@@ -1,4 +1,5 @@
-﻿using DesignPatterns.SOLID;
+﻿using DesignPatterns.CreationalDesignPatterns;
+using DesignPatterns.SOLID;
 
 namespace DesignPatterns;
 
@@ -41,6 +42,7 @@ internal class Program
     /// </summary>
     public static void CreationalDesignPatterns()
     {
-        DesignPatterns.CreationalDesignPatterns.Builder.Run();
+        Builder.Run();
+        Factories.Run();
     }
 }
