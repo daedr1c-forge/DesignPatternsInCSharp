@@ -1,7 +1,4 @@
-﻿using System.Net.NetworkInformation;
-using System;
-
-namespace DesignPatterns.SOLID;
+﻿namespace DesignPatterns.SOLID;
 
 /// <summary>
 /// OCP (Open-Closed Principle)

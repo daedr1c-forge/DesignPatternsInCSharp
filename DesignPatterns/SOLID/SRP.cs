@@ -1,12 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using static DesignPatterns.SOLID.SRP;
-using static System.Formats.Asn1.AsnWriter;
-using static System.Net.Mime.MediaTypeNames;
-using System.Reflection.Metadata;
-using System.Reflection;
-using System.Security.Claims;
-using System.Threading.Channels;
+﻿using System.Diagnostics;
 
 namespace DesignPatterns.SOLID;
 
