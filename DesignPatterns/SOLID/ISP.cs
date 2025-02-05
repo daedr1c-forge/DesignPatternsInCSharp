@@ -1,4 +1,13 @@
-﻿namespace DesignPatterns.SOLID;
+﻿using static DesignPatterns.SOLID.ISP;
+using System.Net.NetworkInformation;
+using System.Reflection.Metadata;
+using System.Reflection;
+using System.Runtime.Intrinsics.X86;
+using System.Threading.Tasks;
+using System.Threading;
+using System;
+
+namespace DesignPatterns.SOLID;
 
 /// <summary>
 /// ISP (Interface Segregation Principle)
@@ -137,8 +146,6 @@ public class ISP
             // decorator
         }
     }
-
-
     public static void Run()
     {
         Console.WriteLine("Start -> ISP (Interface Segregation Principle)");
@@ -146,3 +153,156 @@ public class ISP
         Console.WriteLine("Finish -> ISP (Interface Segregation Principle)");
     }
 }
+
+// Interface Segregation Principle(ISP)
+// The Interface Segregation Principle states that clients should not be forced to depend
+// on methods they do not use.Instead of creating large interfaces with multiple responsibilities, break them into smaller, more focused interfaces.
+
+// Example: Violating ISP
+// Imagine we are building a printer/scanner/fax machine system.
+//    Step 1: Creating a Large Interface
+
+// public interface IMachine
+// {
+//    void Print(Document d);
+//    void Scan(Document d);
+//    void Fax(Document d);
+// }
+// Step 2: Implementing a Multifunction Printer
+// A Multifunction Printer can handle all three tasks.
+
+// public class MultiFunctionPrinter : IMachine
+// {
+//    public void Print(Document d)
+//    {
+//        Console.WriteLine("Printing document...");
+//    }
+
+//    public void Scan(Document d)
+//    {
+//        Console.WriteLine("Scanning document...");
+//    }
+
+//    public void Fax(Document d)
+//    {
+//        Console.WriteLine("Faxing document...");
+//    }
+// }
+// Step 3: Implementing a Simple Printer
+// A basic printer cannot scan or fax, but it still must implement the full IMachine interface.
+
+// public class OldFashionedPrinter : IMachine
+// {
+//    public void Print(Document d)
+//    {
+//        Console.WriteLine("Printing document...");
+//    }
+
+//    public void Scan(Document d)
+//    {
+//        throw new NotImplementedException(); // Violates ISP
+//    }
+
+//    public void Fax(Document d)
+//    {
+//        throw new NotImplementedException(); // Violates ISP
+//    }
+// }
+// Why Does This Violate ISP?
+// OldFashionedPrinter is forced to implement Scan and Fax even though it doesn’t support them.
+// We break the principle by making clients dependent on unused methods.
+// Fixing ISP: Creating Smaller Interfaces
+// Instead of one large interface, we split it into smaller, focused interfaces.
+
+// Step 1: Creating Separate Interfaces
+
+// public interface IPrinter
+// {
+//    void Print(Document d);
+// }
+
+// public interface IScanner
+// {
+//    void Scan(Document d);
+// }
+
+// public interface IFax
+// {
+//    void Fax(Document d);
+// }
+// Step 2: Implementing Focused Devices
+// Now each class only implements what it needs.
+
+// Basic Printer (Only Prints)
+
+// public class SimplePrinter : IPrinter
+//  {
+//    public void Print(Document d)
+//    {
+//        Console.WriteLine("Printing document...");
+//    }
+// }
+// Scanner(Only Scans)
+
+// public class SimpleScanner : IScanner
+// {
+//    public void Scan(Document d)
+//    {
+//        Console.WriteLine("Scanning document...");
+//    }
+// }
+// Multifunction Printer(Implements Multiple Interfaces)
+// A multifunction printer can implement multiple interfaces.
+
+// public class MultiFunctionDevice : IPrinter, IScanner, IFax
+// {
+//    public void Print(Document d)
+//    {
+//        Console.WriteLine("Printing document...");
+//    }
+
+//    public void Scan(Document d)
+//    {
+//        Console.WriteLine("Scanning document...");
+//    }
+
+//    public void Fax(Document d)
+//    {
+//        Console.WriteLine("Faxing document...");
+//    }
+// }
+// Advanced: Using the Decorator Pattern
+// We can compose a multifunction device by combining existing implementations.
+
+// public class MultiFunctionMachine : IPrinter, IScanner
+// {
+//    private readonly IPrinter _printer;
+//    private readonly IScanner _scanner;
+
+//    public MultiFunctionMachine(IPrinter printer, IScanner scanner)
+//    {
+//        _printer = printer;
+//        _scanner = scanner;
+//    }
+
+//    public void Print(Document d) => _printer.Print(d);
+//    public void Scan(Document d) => _scanner.Scan(d);
+// }
+// Using the Decorator Pattern
+
+// public static void Main()
+// {
+//    IPrinter printer = new SimplePrinter();
+//    IScanner scanner = new SimpleScanner();
+
+//    MultiFunctionMachine mfd = new MultiFunctionMachine(printer, scanner);
+
+//    Document doc = new Document();
+//    mfd.Print(doc); // Uses SimplePrinter
+//    mfd.Scan(doc);  // Uses SimpleScanner
+// }
+// Key Takeaways
+// ✅ Large interfaces should be split into smaller, focused ones.
+// ✅ Clients should not be forced to implement methods they don’t use.
+// ✅ Use multiple interfaces or composition (Decorator Pattern) instead of bloated base interfaces.
+// This approach preserves the Interface Segregation Principle, making the code cleaner, modular, and scalable. 
