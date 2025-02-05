@@ -39,7 +39,8 @@ public static class Factories
             return new Point(rho * Math.Cos(theta), rho * Math.Sin(theta));
         }
 
-        private Point(double x, double y)
+        // for factory method private
+        public Point(double x, double y)
         {
             this.x = x;
             this.y = y;
@@ -79,12 +80,30 @@ public static class Factories
     //#####################################################  Factory  ################################################
     //################################################################################################################
 
+    public static class PointFactory
+    {
+        public static Point NewCartesianPoint(double x, double y)
+        {
+            return new Point(x, y);
+        }
+
+        public static Point NewPolarPoint(double rho, double theta)
+        {
+            return new Point(rho * Math.Cos(theta), rho * Math.Sin(theta));
+        }
+    }
+
     public static void Run()
     {
         Console.WriteLine("Start -> Factories");
 
         var point = Point.NewCartesianPoint(1.0, Math.PI / 2);
         Console.WriteLine(point);
+
+        ////////////////////////////////////////
+
+        var pointFactory = PointFactory.NewCartesianPoint(1.0, Math.PI / 2);
+        Console.WriteLine(pointFactory);
 
         Console.WriteLine("Finish -> Factories");
     }
