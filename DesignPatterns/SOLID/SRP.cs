@@ -1,4 +1,12 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using static DesignPatterns.SOLID.SRP;
+using static System.Formats.Asn1.AsnWriter;
+using static System.Net.Mime.MediaTypeNames;
+using System.Reflection.Metadata;
+using System.Reflection;
+using System.Security.Claims;
+using System.Threading.Channels;
 
 namespace DesignPatterns.SOLID;
 
@@ -106,3 +114,103 @@ public static class SRP
         Console.WriteLine("Finish -> SRP (Single Responsibility Principle)");
     }
 }
+
+// Single Responsibility Principle(SRP) in Software Design
+// Introduction
+// The Single Responsibility Principle(SRP) is a fundamental concept in software design that states:
+
+// A class should have only one reason to change.
+
+// This means that each class should only be responsible for a single functionality within
+// a system.By following SRP, we create code that is easier to maintain, test, and extend.
+
+// Example: A Simple Journal Class
+// Imagine we are developing a journal where users can write down their thoughts.We might
+// start by creating a simple Journal class with methods to add and remove entries:
+
+// public class Journal
+// {
+//    private readonly List<string> entries = new();
+//    private static int count = 0;
+
+//    public int AddEntry(string entry)
+//    {
+//        entries.Add($"{++count}: {entry}");
+//        return count; // Return the index of the entry
+//    }
+
+//    public void RemoveEntry(int index)
+//    {
+//        if (index >= 0 && index < entries.Count)
+//            entries.RemoveAt(index);
+//    }
+
+//    public override string ToString()
+//    {
+//        return string.Join(Environment.NewLine, entries);
+//    }
+// }
+// Here, the Journal class manages journal entries by:
+// ✅ Adding new entries
+// ✅ Removing entries
+// ✅ Converting the journal entries into a string
+
+// Violation of SRP: Adding Persistence Methods
+// Suppose we now want to save the journal entries to a file. A common mistake would be to
+// add persistence methods directly into the Journal class:
+
+
+// public void Save(string fileName)
+// {
+//    File.WriteAllText(fileName, ToString());
+// }
+
+//  public static Journal Load(string fileName)
+//{
+//    var journal = new Journal();
+//    var entries = File.ReadAllLines(fileName);
+//    foreach (var entry in entries)
+//        journal.AddEntry(entry);
+//    return journal;
+//}
+// Why This Violates SRP?
+// The Journal class now has two responsibilities:
+
+// Managing journal entries(Core functionality)
+// Handling file storage(Persistence)
+// If the way we store data changes(e.g., saving to a database instead of a file), we would need to modify
+// the Journal class. This goes against SRP because the class should change for only one reason—modifying journal entries.
+
+// Solution: Creating a Separate Persistence Class
+// To fix this, we create a separate Persistence class that handles saving and loading journals:
+
+
+// public class Persistence
+// {
+//    public void SaveToFile(Journal journal, string fileName, bool overwrite = false)
+//    {
+//        if (overwrite || !File.Exists(fileName))
+//            File.WriteAllText(fileName, journal.ToString());
+//    }
+// }
+// Now, our Journal class is only responsible for managing journal entries, while Persistence handles storage.
+
+// Usage Example
+// var journal = new Journal();
+// journal.AddEntry("I cried today.");
+// journal.AddEntry("I ate a bug.");
+
+// Console.WriteLine(journal);
+
+// Save to file
+// var persistence = new Persistence();
+// string filePath = @"C:\temp\journal.txt";
+// persistence.SaveToFile(journal, filePath, true);
+// Benefits of Following SRP
+// ✅ Code Maintainability – Changes to journal logic don’t affect persistence logic.
+// ✅ Reusability – The Persistence class can be used for different objects, not just journals.
+// ✅ Testability – We can unit-test journal functionality separately from persistence logic.
+
+// Conclusion
+// The Single Responsibility Principle helps build scalable and maintainable systems by ensuring each class
+// has one and only one reason to change.By separating concerns, we create modular and reusable code, making future modifications easier.
