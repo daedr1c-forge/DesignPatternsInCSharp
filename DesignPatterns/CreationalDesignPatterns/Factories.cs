@@ -31,18 +31,18 @@ public static class Factories
         private double x, y;
 
         //factory method
-        public static Point NewCartesianPoint(double x, double y)
-        {
-            return new Point(x, y);
-        }
+        //public static Point NewCartesianPoint(double x, double y)
+        //{
+        //    return new Point(x, y);
+        //}
 
-        public static Point NewPolarPoint(double rho, double theta)
-        {
-            return new Point(rho * Math.Cos(theta), rho * Math.Sin(theta));
-        }
+        //public static Point NewPolarPoint(double rho, double theta)
+        //{
+        //    return new Point(rho * Math.Cos(theta), rho * Math.Sin(theta));
+        //}
 
         // for factory method private
-        public Point(double x, double y)
+        private Point(double x, double y)
         {
             this.x = x;
             this.y = y;
@@ -51,6 +51,25 @@ public static class Factories
         public override string ToString()
         {
             return $"{nameof(x)}: {x}, {nameof(y)}: {y}";
+        }
+
+        //################################################################################################################
+        //#################################################  Inner Factory  ##############################################
+        //################################################################################################################
+
+        public static Point Origin = new Point(0, 0);
+
+        public static class Factory
+        {
+            public static Point NewCartesianPoint(double x, double y)
+            {
+                return new Point(x, y);
+            }
+
+            public static Point NewPolarPoint(double rho, double theta)
+            {
+                return new Point(rho * Math.Cos(theta), rho * Math.Sin(theta));
+            }
         }
     }
 
@@ -84,15 +103,16 @@ public static class Factories
 
     public static class PointFactory
     {
-        public static Point NewCartesianPoint(double x, double y)
-        {
-            return new Point(x, y);
-        }
+        //constructor of Point -> public
+        //public static Point NewCartesianPoint(double x, double y)
+        //{
+        //    return new Point(x, y);
+        //}
 
-        public static Point NewPolarPoint(double rho, double theta)
-        {
-            return new Point(rho * Math.Cos(theta), rho * Math.Sin(theta));
-        }
+        //public static Point NewPolarPoint(double rho, double theta)
+        //{
+        //    return new Point(rho * Math.Cos(theta), rho * Math.Sin(theta));
+        //}
     }
 
     //################################################################################################################
@@ -192,13 +212,13 @@ public static class Factories
     {
         Console.WriteLine("Start -> Factories");
 
-        var point = Point.NewCartesianPoint(1.0, Math.PI / 2);
-        Console.WriteLine(point);
+        //var point = Point.NewCartesianPoint(1.0, Math.PI / 2);
+        //Console.WriteLine(point);
 
         ////////////////////////////////////////
 
-        var pointFactory = PointFactory.NewCartesianPoint(1.0, Math.PI / 2);
-        Console.WriteLine(pointFactory);
+        //var pointFactory = PointFactory.NewCartesianPoint(1.0, Math.PI / 2);
+        //Console.WriteLine(pointFactory);
 
         ////////////////////////////////////////
 
@@ -211,9 +231,13 @@ public static class Factories
         var factory1 = new ReplaceableThemeFactry();
         var magicTheme = factory1.CreateTheme(true);
         Console.WriteLine(magicTheme.Value.BgrColor);
-        
+
         factory1.ReplaceTheme(false);
         Console.WriteLine(magicTheme.Value.BgrColor);
+
+        ////////////////////////////////////////
+
+        var p = Point.Factory.NewPolarPoint(1, 2);
 
         Console.WriteLine("Finish -> Factories");
     }
