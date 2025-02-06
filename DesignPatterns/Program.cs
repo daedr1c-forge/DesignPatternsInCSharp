@@ -44,5 +44,6 @@ internal class Program
     {
         Builder.Run();
         Factories.Run();
+        Prototype.Run();
     }
 }
