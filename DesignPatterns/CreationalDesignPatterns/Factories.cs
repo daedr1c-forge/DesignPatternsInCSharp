@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Reflection.PortableExecutable;
+using System.Text;
 using static DesignPatterns.CreationalDesignPatterns.Factories.HotDrinkMachine;
 
 namespace DesignPatterns.CreationalDesignPatterns;
@@ -257,36 +258,78 @@ public static class Factories
         }
     }
 
-    public enum AvailableDrink
-    {
-        Coffe, Tea
-    }
-
     public class HotDrinkMachine
     {
+        // Abstract Factory
+        //public enum AvailableDrink
+        //{
+        //    Coffe, Tea
+        //}
 
-        private Dictionary<AvailableDrink, IHotDrinkFactory> _factories
-            = new Dictionary<AvailableDrink, IHotDrinkFactory>();
+        //private Dictionary<AvailableDrink, IHotDrinkFactory> _factories
+        //    = new Dictionary<AvailableDrink, IHotDrinkFactory>();
+
+        //public HotDrinkMachine()
+        //{
+        //    foreach (AvailableDrink drink in Enum.GetValues(typeof(AvailableDrink)))
+        //    {
+        //        string typeName = "DesignPatterns.CreationalDesignPatterns.Factories."
+        //            + Enum.GetName(typeof(AvailableDrink), drink) + "Factory";
+        //        Console.WriteLine($"Trying to get type: {typeName}");
+
+        //        var type = Type.GetType(typeName);
+
+        //        var factory = (IHotDrinkFactory)Activator.CreateInstance(type);
+
+        //        _factories.Add(drink, factory);
+        //    }
+        //}
+
+        //public IHotDrink MakeDrink(AvailableDrink drink, int amount)
+        //{
+        //    return _factories[drink].Prepare(amount);
+        //}
+
+        // Abstract Factory and OCP
+
+        private List<Tuple<string, IHotDrinkFactory>> _factories = new List<Tuple<string, IHotDrinkFactory>>();
 
         public HotDrinkMachine()
         {
-            foreach (AvailableDrink drink in Enum.GetValues(typeof(AvailableDrink)))
+            foreach (var type in typeof(HotDrinkMachine).Assembly.GetTypes())
             {
-                string typeName = "DesignPatterns.CreationalDesignPatterns.Factories."
-                    + Enum.GetName(typeof(AvailableDrink), drink) + "Factory";
-                Console.WriteLine($"Trying to get type: {typeName}");
-
-                var type = Type.GetType(typeName);
-
-                var factory = (IHotDrinkFactory)Activator.CreateInstance(type);
-
-                _factories.Add(drink, factory);
+                if (typeof(IHotDrinkFactory).IsAssignableFrom(type) && !type.IsInterface)
+                {
+                    _factories.Add(Tuple.Create(type.Name.Replace("Factory", string.Empty),
+                        (IHotDrinkFactory)Activator.CreateInstance(type)));
+                }
             }
         }
 
-        public IHotDrink MakeDrink(AvailableDrink drink, int amount)
+        public IHotDrink MakeDrink()
         {
-            return _factories[drink].Prepare(amount);
+            Console.WriteLine("Availeble drinks :");
+            for (var index = 0; index < _factories.Count; index++)
+            {
+                var tuple = _factories[index];
+                Console.WriteLine($"{index}: {tuple.Item1}");
+            }
+
+            while (true)
+            {
+                string s;
+                if ((s = Console.ReadLine()) != null && int.TryParse(s, out int i) && i >= 0 && i < _factories.Count)
+                {
+                    Console.Write("Specify amount: ");
+                    s = Console.ReadLine();
+                    if (s != null && int.TryParse(s, out int amount) && amount > 0)
+                    {
+                        return _factories[i].Item2.Prepare(amount);
+                    }
+                }
+
+                Console.WriteLine("Incorrent input, try again!");
+            }
         }
     }
 
@@ -326,6 +369,10 @@ public static class Factories
         //var machine = new HotDrinkMachine();
         //var drink = machine.MakeDrink(AvailableDrink.Tea, 100);
         //drink.Consume();
+
+        var machine = new HotDrinkMachine();
+        var drink = machine.MakeDrink();
+        drink.Consume();
 
         Console.WriteLine("Finish -> Factories");
     }
