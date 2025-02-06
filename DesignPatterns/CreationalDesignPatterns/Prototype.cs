@@ -2,7 +2,12 @@
 
 public static class Prototype
 {
-    public class Person
+    public interface IPrototype<T>
+    {
+        T DeepCopy();
+    }
+
+    public class Person : IPrototype<Person>
     {
         public string[] Names;
         public Address Address;
@@ -16,16 +21,21 @@ public static class Prototype
         public Person(Person other)
         {
             Names = other.Names;
-            Address = new Address(other.Address); 
+            Address = new Address(other.Address);
         }
 
         public override string ToString()
         {
             return $"{nameof(Names)}: {string.Join(" ", Names)}, {nameof(Address)}: {Address}";
         }
+
+        public Person DeepCopy()
+        {
+            return new Person(Names, Address.DeepCopy());
+        }
     }
 
-    public class Address
+    public class Address : IPrototype<Address>
     {
         public string StreetName;
         public int HouseNumber;
@@ -46,6 +56,11 @@ public static class Prototype
         {
             return $"{nameof(StreetName)}: {StreetName}, {nameof(HouseNumber)}: {HouseNumber}";
         }
+
+        public Address DeepCopy()
+        {
+            return new Address(StreetName, HouseNumber);
+        }
     }
 
     public static void Run()
@@ -54,7 +69,7 @@ public static class Prototype
 
         var john = new Person(new[] { "John", "Smith" }, new Address("London Road", 123));
 
-        var jane = new Person(john);
+        var jane = john.DeepCopy();
         jane.Names[0] = "Jane";
         jane.Address.HouseNumber = 321;
 
