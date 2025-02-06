@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using static DesignPatterns.CreationalDesignPatterns.Factories.HotDrinkMachine;
 
 namespace DesignPatterns.CreationalDesignPatterns;
 
@@ -208,6 +209,87 @@ public static class Factories
         }
     }
 
+    //################################################################################################################
+    //###############################################  Abstract Factory  #############################################
+    //################################################################################################################
+
+    public interface IHotDrink
+    {
+        void Consume();
+    }
+
+    internal class Tea : IHotDrink
+    {
+        public void Consume()
+        {
+            Console.WriteLine("This tea is nice but I'd prefer it with milk.");
+        }
+    }
+
+    internal class Coffe : IHotDrink
+    {
+        public void Consume()
+        {
+            Console.WriteLine("This coffe is sensational");
+        }
+    }
+
+    public interface IHotDrinkFactory
+    {
+        IHotDrink Prepare(int amount);
+    }
+
+    internal class TeaFactory : IHotDrinkFactory
+    {
+        public IHotDrink Prepare(int amount)
+        {
+            Console.WriteLine($"Put in a tea bag, boil water, pour {amount} ml, add lemon, enjoy!");
+            return new Tea();
+        }
+    }
+
+    internal class CoffeFactory : IHotDrinkFactory
+    {
+        public IHotDrink Prepare(int amount)
+        {
+            Console.WriteLine($"Grind some beans, boil water, pour {amount} ml, add cream and suger, enjoy!");
+            return new Coffe();
+        }
+    }
+
+    public enum AvailableDrink
+    {
+        Coffe, Tea
+    }
+
+    public class HotDrinkMachine
+    {
+
+        private Dictionary<AvailableDrink, IHotDrinkFactory> _factories
+            = new Dictionary<AvailableDrink, IHotDrinkFactory>();
+
+        public HotDrinkMachine()
+        {
+            foreach (AvailableDrink drink in Enum.GetValues(typeof(AvailableDrink)))
+            {
+                string typeName = "DesignPatterns.CreationalDesignPatterns.Factories."
+                    + Enum.GetName(typeof(AvailableDrink), drink) + "Factory";
+                Console.WriteLine($"Trying to get type: {typeName}");
+
+                var type = Type.GetType(typeName);
+
+                var factory = (IHotDrinkFactory)Activator.CreateInstance(type);
+
+                _factories.Add(drink, factory);
+            }
+        }
+
+        public IHotDrink MakeDrink(AvailableDrink drink, int amount)
+        {
+            return _factories[drink].Prepare(amount);
+        }
+    }
+
     public static void Run()
     {
         Console.WriteLine("Start -> Factories");
@@ -238,6 +320,12 @@ public static class Factories
         ////////////////////////////////////////
 
         var p = Point.Factory.NewPolarPoint(1, 2);
+
+        ////////////////////////////////////////
+
+        //var machine = new HotDrinkMachine();
+        //var drink = machine.MakeDrink(AvailableDrink.Tea, 100);
+        //drink.Consume();
 
         Console.WriteLine("Finish -> Factories");
     }
