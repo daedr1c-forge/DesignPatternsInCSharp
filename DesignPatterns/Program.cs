@@ -8,7 +8,8 @@ internal class Program
     static void Main(string[] args)
     {
         //SectionSOLID();
-        CreationalDesignPatterns();
+        //CreationalDesignPatterns();
+        StructuralDesignPatterns();
     }
 
     /// <summary>
@@ -45,5 +46,10 @@ internal class Program
         Factories.Run();
         Prototype.Run();
         Singleton.Run();
+    }
+
+    public static void StructuralDesignPatterns()
+    {
+
     }
 }
