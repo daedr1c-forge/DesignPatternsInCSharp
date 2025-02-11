@@ -35,7 +35,6 @@ internal class Program
     /// -> They hide the details of how instances of these classes are created and assembled.
     /// Types of Creational Design Patterns :
     ///     -> Factory Method Design Patterns
-    ///     -> Abstract Factory Method Design Patterns
     ///     -> Singleton Method Design Pattern
     ///     -> Prototype Method Design Patterns
     ///     -> Builder Method Design Patterns
@@ -45,5 +44,6 @@ internal class Program
         Builder.Run();
         Factories.Run();
         Prototype.Run();
+        Singleton.Run();
     }
 }
