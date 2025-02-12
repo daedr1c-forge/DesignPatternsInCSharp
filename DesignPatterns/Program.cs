@@ -1,5 +1,6 @@
 ﻿using DesignPatterns.CreationalDesignPatterns;
 using DesignPatterns.SOLID;
+using DesignPatterns.StructuralDesignPatterns;
 
 namespace DesignPatterns;
 
@@ -40,7 +41,7 @@ internal class Program
     ///     -> Prototype Method Design Patterns
     ///     -> Builder Method Design Patterns
     /// </summary>
-    public static void CreationalDesignPatterns()
+    private static void CreationalDesignPatterns()
     {
         Builder.Run();
         Factories.Run();
@@ -48,8 +49,8 @@ internal class Program
         Singleton.Run();
     }
 
-    public static void StructuralDesignPatterns()
+    private static void StructuralDesignPatterns()
     {
-
+        Adapter.Run();
     }
 }
