@@ -1,4 +1,5 @@
 ﻿using MoreLinq.Extensions;
+using System.Collections;
 using System.Collections.ObjectModel;
 
 namespace DesignPatterns.StructuralDesignPatterns;
@@ -14,6 +15,18 @@ public static class Adapter
             X = x;
             Y = y;
         }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Point point &&
+                   X == point.X &&
+                   Y == point.Y;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(X, Y);
+        }
     }
 
     public class Line
@@ -24,6 +37,18 @@ public static class Adapter
         {
             Start = start;
             End = end;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Line line &&
+                   EqualityComparer<Point>.Default.Equals(Start, line.Start) &&
+                   EqualityComparer<Point>.Default.Equals(End, line.End);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Start, End);
         }
     }
 
@@ -49,14 +74,21 @@ public static class Adapter
         new VectorRectangle(3,3,6,6),
     };
 
-    public class LineToPointAdapter : Collection<Point>
+    public class LineToPointAdapter : IEnumerable<Point>
     {
         private static int _count;
+        private static Dictionary<int, List<Point>> _cache = new Dictionary<int, List<Point>>();
 
         public LineToPointAdapter(Line line)
         {
+            var hash = line.GetHashCode();
+
+            if (_cache.ContainsKey(hash)) return;
+
             Console.WriteLine($"{++_count}: Generation points for line " +
                 $"[{line.Start.X},{line.Start.Y}]-[{line.End.X},{line.End.Y}]");
+
+            var points = new List<Point>();
 
             int left = Math.Min(line.Start.X, line.End.X);
             int right = Math.Max(line.Start.X, line.End.X);
@@ -69,16 +101,28 @@ public static class Adapter
             {
                 for (int y = top; y <= bottom; ++y)
                 {
-                    Add(new Point(left, y));
+                    points.Add(new Point(left, y));
                 }
             }
             else if (dy == 0)
             {
                 for (int x = left; x <= right; ++x)
                 {
-                    Add(new Point(x, top));
+                    points.Add(new Point(x, top));
                 }
             }
+
+            _cache.Add(hash, points);
+        }
+
+        public IEnumerator<Point> GetEnumerator()
+        {
+            return _cache.Values.SelectMany(x => x).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 
