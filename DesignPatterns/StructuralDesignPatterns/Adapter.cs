@@ -1,4 +1,6 @@
-﻿using MoreLinq.Extensions;
+﻿using Autofac.Features.Metadata;
+using Autofac;
+using MoreLinq.Extensions;
 using System.Collections;
 using System.Collections.ObjectModel;
 using static DesignPatterns.StructuralDesignPatterns.Adapter;
@@ -132,6 +134,10 @@ public static class Adapter
         Console.Write(".");
     }
 
+    //################################################################################################################
+    //###########################################  Generic Value Adapter  ############################################
+    //################################################################################################################
+
     // Vector2f, Vector3i
 
     public interface IInteger
@@ -253,6 +259,77 @@ public static class Adapter
         }
     }
 
+    //################################################################################################################
+    //######################################  Adapter in Dependency Injection  #######################################
+    //################################################################################################################
+
+    public interface ICommand
+    {
+        void Execute();
+    }
+
+    public class SaveCommand : ICommand
+    {
+        public void Execute()
+        {
+            Console.WriteLine("Saving current file");
+        }
+    }
+
+    public class OpenCommand : ICommand
+    {
+        public void Execute()
+        {
+            Console.WriteLine("Opening a file");
+        }
+    }
+
+    public class Button
+    {
+        private ICommand command;
+        private string name;
+
+        public Button(ICommand command, string name)
+        {
+            if (command == null)
+            {
+                throw new ArgumentNullException(paramName: nameof(command));
+            }
+            this.command = command;
+            this.name = name;
+        }
+
+        public void Click()
+        {
+            command.Execute();
+        }
+
+        public void PrintMe()
+        {
+            Console.WriteLine($"I am a button called {name}");
+        }
+    }
+
+    public class Editor
+    {
+        private readonly IEnumerable<Button> buttons;
+
+        public IEnumerable<Button> Buttons => buttons;
+
+        public Editor(IEnumerable<Button> buttons)
+        {
+            this.buttons = buttons;
+        }
+
+        public void ClickAll()
+        {
+            foreach (var btn in buttons)
+            {
+                btn.Click();
+            }
+        }
+    }
+
     public static void Run()
     {
 
@@ -263,6 +340,8 @@ public static class Adapter
 
         Console.WriteLine();
 
+        ///////////////////////////////////
+
         var v = new Vector2i(1, 2);
         v[0] = 0;
 
@@ -272,9 +351,32 @@ public static class Adapter
 
         Vector3f u = Vector3f.Create(3.5f, 2.2f, 1);
 
+
+        // for each ICommand, a ToolbarButton is created to wrap it, and all
+        // are passed to the editor
+        var b = new ContainerBuilder();
+        b.RegisterType<OpenCommand>().As<ICommand>().WithMetadata("Name", "Open");
+        b.RegisterType<SaveCommand>().As<ICommand>().WithMetadata("Name", "Save");
+
+        //b.RegisterType<Button>();
+        b.RegisterAdapter<ICommand, Button>(cmd => new Button(cmd, ""));
+        b.RegisterAdapter<Meta<ICommand>, Button>(cmd => new Button(cmd.Value, (string)cmd.Metadata["Name"]));
+
+        b.RegisterType<Editor>();
+
+        using (var c = b.Build())
+        {
+            var editor = c.Resolve<Editor>();
+            editor.ClickAll();
+
+            // problem: only one button
+
+            foreach (var btn in editor.Buttons)
+                btn.PrintMe();
+        }
+
         Console.WriteLine("Finish -> Adapter");
     }
-
     private static void Draw()
     {
         foreach (var vo in objects)
