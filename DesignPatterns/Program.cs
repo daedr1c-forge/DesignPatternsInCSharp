@@ -52,5 +52,6 @@ internal class Program
     private static void StructuralDesignPatterns()
     {
         Adapter.Run();
+        Bridge.Run();
     }
 }

@@ -1,9 +1,8 @@
-﻿using Autofac.Features.Metadata;
-using Autofac;
+﻿using Autofac;
+using Autofac.Features.Metadata;
 using MoreLinq.Extensions;
 using System.Collections;
 using System.Collections.ObjectModel;
-using static DesignPatterns.StructuralDesignPatterns.Adapter;
 
 namespace DesignPatterns.StructuralDesignPatterns;
 
@@ -359,7 +358,7 @@ public static class Adapter
         b.RegisterType<SaveCommand>().As<ICommand>().WithMetadata("Name", "Save");
 
         //b.RegisterType<Button>();
-        b.RegisterAdapter<ICommand, Button>(cmd => new Button(cmd, ""));
+        //b.RegisterAdapter<ICommand, Button>(cmd => new Button(cmd, ""));
         b.RegisterAdapter<Meta<ICommand>, Button>(cmd => new Button(cmd.Value, (string)cmd.Metadata["Name"]));
 
         b.RegisterType<Editor>();
@@ -367,7 +366,7 @@ public static class Adapter
         using (var c = b.Build())
         {
             var editor = c.Resolve<Editor>();
-            editor.ClickAll();
+            //editor.ClickAll();
 
             // problem: only one button
 
