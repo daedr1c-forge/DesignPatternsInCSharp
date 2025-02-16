@@ -46,7 +46,7 @@ public static class Composite
     }
 
 
-    public class Neuron : IEnumerable<Neuron> 
+    public class Neuron : IEnumerable<Neuron>
     {
         public float Value;
         public List<Neuron> In, Out;
@@ -65,6 +65,69 @@ public static class Composite
     public class NeuronLayer : Collection<Neuron>
     {
 
+    }
+
+
+    public interface IFilter<T>
+    {
+        IEnumerable<T> Filter(IEnumerable<T> items, ISpecification<T> spec);
+    }
+
+    public abstract class ISpecification<T>
+    {
+        public abstract bool IsSatisfied(T p);
+
+        public static ISpecification<T> operator &(ISpecification<T> first, ISpecification<T> second)
+        {
+            return new AndSpecification<T>(first, second);
+        }
+    }
+
+    public abstract class CompositeSpecification<T> : ISpecification<T>
+    {
+        protected readonly ISpecification<T>[] _items;
+
+        public CompositeSpecification(params ISpecification<T>[] items)
+        {
+            _items = items;
+        }
+    }
+
+    //combinator
+    public class AndSpecification<T> : CompositeSpecification<T>
+    {
+        public AndSpecification(params ISpecification<T>[] items) : base(items)
+        {
+        }
+
+        public override bool IsSatisfied(T t)
+        {
+            return _items.All(i => i.IsSatisfied(t));
+        }
+    }
+
+    public class ColorSpecification : ISpecification<Product>
+    {
+        private Color color;
+
+        public ColorSpecification(Color color)
+        {
+
+        }
+
+        public override bool IsSatisfied(Product p)
+        {
+            return true;
+        }
+    }
+
+    public class Color
+    {
+    }
+
+    public class Product
+    {
+        public int Size { get; set; }
     }
 
     public static void Run()
