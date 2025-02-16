@@ -53,5 +53,6 @@ internal class Program
     {
         Adapter.Run();
         Bridge.Run();
+        Composite.Run();
     }
 }
