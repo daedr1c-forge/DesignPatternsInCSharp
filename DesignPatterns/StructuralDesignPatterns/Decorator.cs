@@ -703,6 +703,71 @@ public static class Decorator
         }
     }
 
+    //################################################################################################################
+    //####################################  Multiple Inheritance with Interfaces  ####################################
+    //################################################################################################################
+
+    public interface IBirth
+    {
+        void Fly();
+        int Weight { get; set; }
+    }
+
+    public class Birth : IBirth
+    {
+        public int Weight { get; set; }
+
+        public void Fly()
+        {
+            Console.WriteLine($"Soaring in the sky with weight {Weight}");
+        }
+    }
+
+    public interface ILizard
+    {
+        void Crawl();
+        int Weight { get; set; }
+    }
+
+    public class Lizard : ILizard
+    {
+        public int Weight { get; set; }
+
+        public void Crawl()
+        {
+            Console.WriteLine($"Crawling in the dirt with weight {Weight}");
+        }
+    }
+
+    public class Dragon : IBirth, ILizard
+    {
+        private Birth birth = new Birth();
+        private Lizard lizard = new Lizard();
+        private int weight;
+
+        public void Crawl()
+        {
+            lizard.Crawl();
+        }
+
+        public void Fly()
+        {
+            birth.Fly();
+        }
+
+        public int Weight
+        {
+            get { return weight; }
+            set
+            {
+                weight = value;
+                birth.Weight = value;
+                lizard.Weight = weight;
+            }
+        }
+    }
+
+
     public static void Run()
     {
         Console.WriteLine("Start -> Decorator");
@@ -719,6 +784,13 @@ public static class Decorator
         MyStringBuilder s = "Hello ";
         s += "world";
         Console.WriteLine(s);
+
+        ////////////////////////////////////////
+
+        var d = new Dragon();
+        d.Weight = 123;
+        d.Fly();
+        d.Crawl();
 
         Console.WriteLine("Finish -> Decorator");
     }
