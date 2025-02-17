@@ -150,9 +150,9 @@ public static class Composite
         var layer1 = new NeuronLayer();
         var layer2 = new NeuronLayer();
 
-        neuron1.ConnectTo(neuron2);
-        neuron1.ConnectTo(layer1);
-        layer1.ConnectTo(layer2);
+        //neuron1.ConnectTo(neuron2);
+        //neuron1.ConnectTo(layer1);
+        //layer1.ConnectTo(layer2);
 
         Console.WriteLine("Finish -> Composite");
     }
