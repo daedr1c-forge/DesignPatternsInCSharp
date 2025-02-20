@@ -776,6 +776,50 @@ public static class Decorator
         string AsString();
     }
 
+    public class Squere : IShape
+    {
+        private float _side;
+
+        public Squere(float side)
+        {
+            _side = side;
+        }
+
+        public string AsString() => $"A square with side {_side}";
+    }
+
+    public class ColoredShape1 : IShape
+    {
+        private IShape _shape;
+        private string _color;
+
+        public ColoredShape1(IShape shape, string color)
+        {
+            _shape = shape;
+            _color = color;
+        }
+
+        public string AsString() => $"{_shape.AsString()} has the color {_color}";
+    }
+
+    public class TransparentShape1 : IShape
+    {
+        private IShape _shape;
+        private float _transpaerncy;
+
+        public TransparentShape1(IShape shape, float transpaerncy)
+        {
+            _shape = shape;
+            _transpaerncy = transpaerncy;
+        }
+
+        public string AsString() => $"{_shape.AsString()} has {_transpaerncy * 100.0}% transpaerncy";
+    }
+
+    //################################################################################################################
+    //#########################################  Detecting Decorator Cycles  #########################################
+    //################################################################################################################
+
     public class Circle : Shape
     {
         private float _radius;
@@ -790,52 +834,8 @@ public static class Decorator
             _radius *= factor;
         }
 
-        public string AsString() => $"A circle with radius {_radius}";
+        public override string AsString() => $"A circle with radius {_radius}";
     }
-
-    public class Squere : IShape
-    {
-        private float _side;
-
-        public Squere(float side)
-        {
-            _side = side;
-        }
-
-        public string AsString() => $"A square with side {_side}";
-    }
-
-    //public class ColoredShape : IShape
-    //{
-    //    private IShape _shape;
-    //    private string _color;
-
-    //    public ColoredShape(IShape shape, string color)
-    //    {
-    //        _shape = shape;
-    //        _color = color;
-    //    }
-
-    //    public override string AsString() => $"{_shape.AsString()} has the color {_color}";
-    //}
-
-    public class TransparentShape : IShape
-    {
-        private IShape _shape;
-        private float _transpaerncy;
-
-        public TransparentShape(IShape shape, float transpaerncy)
-        {
-            _shape = shape;
-            _transpaerncy = transpaerncy;
-        }
-
-        public string AsString() => $"{_shape.AsString()} has {_transpaerncy * 100.0}% transpaerncy";
-    }
-
-    //################################################################################################################
-    //#########################################  Detecting Decorator Cycles  #########################################
-    //################################################################################################################
 
     public abstract class Shape
     {
@@ -965,19 +965,19 @@ public static class Decorator
 
         ////////////////////////////////////////
 
-        //var square = new Squere(1.23f);
-        //Console.WriteLine(square.AsString());
-        //var redSquere = new ColoredShape(square, "red");
-        //Console.WriteLine(redSquere.AsString());
-        //var redHalfTransparentSquare = new TransparentShape(redSquere, 0.5f);
-        //Console.WriteLine(redHalfTransparentSquare.AsString());
+        var square = new Squere(1.23f);
+        Console.WriteLine(square.AsString());
+        var redSquere = new ColoredShape1(square, "red");
+        Console.WriteLine(redSquere.AsString());
+        var redHalfTransparentSquare = new TransparentShape1(redSquere, 0.5f);
+        Console.WriteLine(redHalfTransparentSquare.AsString());
 
         var circle = new Circle(2);
         var colored1 = new ColoredShape(circle, "red");
         var colored2 = new ColoredShape(colored1, "blue");
 
-        Console.WriteLine(circle.AsString());
-        Console.WriteLine(colored1.AsString());
+        //Console.WriteLine(circle.AsString());
+        //Console.WriteLine(colored1.AsString());
         Console.WriteLine(colored2.AsString());
 
         Console.WriteLine("Finish -> Decorator");
