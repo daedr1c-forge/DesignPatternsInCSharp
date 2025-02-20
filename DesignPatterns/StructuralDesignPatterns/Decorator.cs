@@ -767,6 +767,71 @@ public static class Decorator
         }
     }
 
+    //################################################################################################################
+    //########################################  Dynamic Decorator Composition  #######################################
+    //################################################################################################################
+
+    public interface IShape
+    {
+        string AsString();
+    }
+
+    public class Circle : IShape
+    {
+        private float _radius;
+
+        public Circle(float radius)
+        {
+            _radius = radius;
+        }
+
+        public void Resize(float factor)
+        {
+            _radius *= factor;
+        }
+
+        public string AsString() => $"A circle with radius {_radius}";
+    }
+
+    public class Squere : IShape
+    {
+        private float _side;
+
+        public Squere(float side)
+        {
+            _side = side;
+        }
+
+        public string AsString() => $"A square with side {_side}";
+    }
+
+    public class ColoredShape : IShape
+    {
+        private IShape _shape;
+        private string _color;
+
+        public ColoredShape(IShape shape, string color)
+        {
+            _shape = shape;
+            _color = color;
+        }
+
+        public string AsString() => $"{_shape.AsString()} has the color {_color}";
+    }
+
+    public class TransparentShape : IShape
+    {
+        private IShape _shape;
+        private float _transpaerncy;
+
+        public TransparentShape(IShape shape, float transpaerncy)
+        {
+            _shape = shape;
+            _transpaerncy = transpaerncy;
+        }
+
+        public string AsString() => $"{_shape.AsString()} has {_transpaerncy * 100.0}% transpaerncy";
+    }
 
     public static void Run()
     {
@@ -791,6 +856,15 @@ public static class Decorator
         d.Weight = 123;
         d.Fly();
         d.Crawl();
+
+        ////////////////////////////////////////
+
+        var square = new Squere(1.23f);
+        Console.WriteLine(square.AsString());
+        var redSquere = new ColoredShape(square, "red");
+        Console.WriteLine(redSquere.AsString());
+        var redHalfTransparentSquare = new TransparentShape(redSquere, 0.5f);
+        Console.WriteLine(redHalfTransparentSquare.AsString());
 
         Console.WriteLine("Finish -> Decorator");
     }
