@@ -776,7 +776,7 @@ public static class Decorator
         string AsString();
     }
 
-    public class Circle : IShape
+    public class Circle : Shape
     {
         private float _radius;
 
@@ -805,19 +805,19 @@ public static class Decorator
         public string AsString() => $"A square with side {_side}";
     }
 
-    public class ColoredShape : IShape
-    {
-        private IShape _shape;
-        private string _color;
+    //public class ColoredShape : IShape
+    //{
+    //    private IShape _shape;
+    //    private string _color;
 
-        public ColoredShape(IShape shape, string color)
-        {
-            _shape = shape;
-            _color = color;
-        }
+    //    public ColoredShape(IShape shape, string color)
+    //    {
+    //        _shape = shape;
+    //        _color = color;
+    //    }
 
-        public string AsString() => $"{_shape.AsString()} has the color {_color}";
-    }
+    //    public override string AsString() => $"{_shape.AsString()} has the color {_color}";
+    //}
 
     public class TransparentShape : IShape
     {
@@ -831,6 +831,112 @@ public static class Decorator
         }
 
         public string AsString() => $"{_shape.AsString()} has {_transpaerncy * 100.0}% transpaerncy";
+    }
+
+    //################################################################################################################
+    //#########################################  Detecting Decorator Cycles  #########################################
+    //################################################################################################################
+
+    public abstract class Shape
+    {
+        public virtual string AsString() => string.Empty;
+    }
+
+    public abstract class ShapeDecorator : Shape
+    {
+        protected internal readonly List<Type> types = new();
+        protected internal Shape shape;
+
+        public ShapeDecorator(Shape shape)
+        {
+            this.shape = shape;
+            if (shape is ShapeDecorator sd)
+                types.AddRange(sd.types);
+        }
+    }
+
+    public abstract class ShapeDecorator<TSelf, TCyclePolicy> : ShapeDecorator
+        where TCyclePolicy : ShapeDecoratorCyclePolicy, new()
+    {
+        protected readonly TCyclePolicy policy = new();
+
+        public ShapeDecorator(Shape shape) : base(shape)
+        { 
+            if (policy.TypeAdditionAllowed(typeof(TSelf), types))
+                types.Add(typeof(TSelf));
+        }
+    }
+
+    // can determine one policy for all classes
+    public class ShapeDecoratorWithPolicy<T>
+      : ShapeDecorator<T, ThrowOnCyclePolicy>
+    {
+        public ShapeDecoratorWithPolicy(Shape shape) : base(shape)
+        {
+        }
+    }
+
+    // dynamic
+    public class ColoredShape
+      : ShapeDecorator<ColoredShape, AbsorbCyclePolicy>
+    {
+        private readonly string color;
+
+        public ColoredShape(Shape shape, string color) : base(shape)
+        {
+            this.color = color;
+        }
+
+        public override string AsString()
+        {
+            var sb = new StringBuilder($"{shape.AsString()}");
+
+            if (policy.ApplicationAllowed(types[0], types.Skip(1).ToList()))
+                sb.Append($" has the color {color}");
+
+            return sb.ToString();
+        }
+    }
+
+    public class AbsorbCyclePolicy : ShapeDecoratorCyclePolicy
+    {
+        public override bool TypeAdditionAllowed(Type type, IList<Type> allTypes)
+        {
+            return true;
+        }
+
+        public override bool ApplicationAllowed(Type type, IList<Type> allTypes)
+        {
+            return !allTypes.Contains(type);
+        }
+    }
+
+
+    public abstract class ShapeDecoratorCyclePolicy
+    {
+        public abstract bool TypeAdditionAllowed(Type type, IList<Type> allTypes);
+        public abstract bool ApplicationAllowed(Type type, IList<Type> allTypes);
+    }
+
+    public class ThrowOnCyclePolicy : ShapeDecoratorCyclePolicy
+    {
+        private bool Handler(Type type, IList<Type> allTypes)
+        {
+            if (allTypes.Contains(type))
+                throw new InvalidOperationException($"Cyrcle detected! Type is already a {type.FullName}!");
+
+            return true;
+        }
+
+        public override bool ApplicationAllowed(Type type, IList<Type> allTypes)
+        {
+            return Handler(type, allTypes);
+        }
+
+        public override bool TypeAdditionAllowed(Type type, IList<Type> allTypes)
+        {
+            return Handler(type, allTypes);
+        }
     }
 
     public static void Run()
@@ -859,12 +965,20 @@ public static class Decorator
 
         ////////////////////////////////////////
 
-        var square = new Squere(1.23f);
-        Console.WriteLine(square.AsString());
-        var redSquere = new ColoredShape(square, "red");
-        Console.WriteLine(redSquere.AsString());
-        var redHalfTransparentSquare = new TransparentShape(redSquere, 0.5f);
-        Console.WriteLine(redHalfTransparentSquare.AsString());
+        //var square = new Squere(1.23f);
+        //Console.WriteLine(square.AsString());
+        //var redSquere = new ColoredShape(square, "red");
+        //Console.WriteLine(redSquere.AsString());
+        //var redHalfTransparentSquare = new TransparentShape(redSquere, 0.5f);
+        //Console.WriteLine(redHalfTransparentSquare.AsString());
+
+        var circle = new Circle(2);
+        var colored1 = new ColoredShape(circle, "red");
+        var colored2 = new ColoredShape(colored1, "blue");
+
+        Console.WriteLine(circle.AsString());
+        Console.WriteLine(colored1.AsString());
+        Console.WriteLine(colored2.AsString());
 
         Console.WriteLine("Finish -> Decorator");
     }
