@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using Autofac;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace DesignPatterns.StructuralDesignPatterns;
@@ -861,7 +862,7 @@ public static class Decorator
         protected readonly TCyclePolicy policy = new();
 
         public ShapeDecorator(Shape shape) : base(shape)
-        { 
+        {
             if (policy.TypeAdditionAllowed(typeof(TSelf), types))
                 types.Add(typeof(TSelf));
         }
@@ -939,6 +940,40 @@ public static class Decorator
         }
     }
 
+    public interface IReportingService
+    {
+        void Report();
+    }
+
+    public class ReportingService : IReportingService
+    {
+        public void Report()
+        {
+            Console.WriteLine("Here is your report");
+        }
+    }
+
+    public class ReportingServiceWithLogging : IReportingService
+    {
+        private IReportingService decorated;
+
+        public ReportingServiceWithLogging(IReportingService decorated)
+        {
+            if (decorated == null)
+            {
+                throw new ArgumentNullException(paramName: nameof(decorated));
+            }
+            this.decorated = decorated;
+        }
+
+        public void Report()
+        {
+            Console.WriteLine("Commencing log...");
+            decorated.Report();
+            Console.WriteLine("Ending log...");
+        }
+    }
+
     public static void Run()
     {
         Console.WriteLine("Start -> Decorator");
@@ -979,6 +1014,21 @@ public static class Decorator
         //Console.WriteLine(circle.AsString());
         //Console.WriteLine(colored1.AsString());
         Console.WriteLine(colored2.AsString());
+
+        var b = new ContainerBuilder();
+        b.RegisterType<ReportingService>().Named<IReportingService>("reporting");
+        b.RegisterDecorator<IReportingService>(
+            (context, service) => new ReportingServiceWithLogging(service),
+          "reporting");
+
+        // open generic decorators also supported
+        // b.RegisterGenericDecorator()
+
+        using (var c = b.Build())
+        {
+            var r = c.Resolve<IReportingService>();
+            r.Report();
+        }
 
         Console.WriteLine("Finish -> Decorator");
     }
