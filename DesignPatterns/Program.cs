@@ -55,5 +55,7 @@ internal class Program
         Bridge.Run();
         Composite.Run();
         Decorator.Run();
+        Flyweight.Run();
+
     }
 }
