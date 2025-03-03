@@ -55,7 +55,8 @@ internal class Program
         Bridge.Run();
         Composite.Run();
         Decorator.Run();
+        Facade.Run();
         Flyweight.Run();
-
+        Proxy.Run();
     }
 }
