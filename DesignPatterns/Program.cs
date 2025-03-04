@@ -1,4 +1,5 @@
-﻿using DesignPatterns.CreationalDesignPatterns;
+﻿using DesignPatterns.BehavioralDesignPatterns;
+using DesignPatterns.CreationalDesignPatterns;
 using DesignPatterns.SOLID;
 using DesignPatterns.StructuralDesignPatterns;
 
@@ -10,7 +11,8 @@ internal class Program
     {
         //SectionSOLID();
         //CreationalDesignPatterns();
-        StructuralDesignPatterns();
+        //StructuralDesignPatterns();
+        //BehavioralDesignPatterns();
     }
 
     /// <summary>
@@ -58,5 +60,10 @@ internal class Program
         Facade.Run();
         Flyweight.Run();
         Proxy.Run();
+    }
+
+    public static void BehavioralDesignPatterns()
+    {
+        ChainOfResponsibility.Run();
     }
 }
