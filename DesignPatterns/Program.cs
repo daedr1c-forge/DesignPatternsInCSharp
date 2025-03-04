@@ -62,8 +62,9 @@ internal class Program
         Proxy.Run();
     }
 
-    public static void BehavioralDesignPatterns()
+    private static void BehavioralDesignPatterns()
     {
         ChainOfResponsibility.Run();
+        Command.Run();
     }
 }
