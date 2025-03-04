@@ -1,6 +1,6 @@
 ﻿namespace DesignPatterns.BehavioralDesignPatterns;
 
-public class Mediator
+public static class Mediator
 {
     public static void Run()
     {
