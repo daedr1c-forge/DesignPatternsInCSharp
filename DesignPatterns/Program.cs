@@ -73,5 +73,6 @@ internal class Program
         State.Run();
         Strategy.Run();
         TemplateMethod.Run();
+        Visitor.Run();
     }
 }
