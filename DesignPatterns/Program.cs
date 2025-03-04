@@ -72,5 +72,6 @@ internal class Program
         Observer.Run();
         State.Run();
         Strategy.Run();
+        TemplateMethod.Run();
     }
 }
