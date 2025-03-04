@@ -66,5 +66,6 @@ internal class Program
     {
         ChainOfResponsibility.Run();
         Command.Run();
+        Iterator.Run();
     }
 }
