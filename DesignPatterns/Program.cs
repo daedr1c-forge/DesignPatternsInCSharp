@@ -70,5 +70,6 @@ internal class Program
         Mediator.Run();
         Memento.Run();
         Observer.Run();
+        State.Run();
     }
 }
