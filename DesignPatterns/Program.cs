@@ -68,5 +68,7 @@ internal class Program
         Command.Run();
         Iterator.Run();
         Mediator.Run();
+        Memento.Run();
+        Observer.Run();
     }
 }
