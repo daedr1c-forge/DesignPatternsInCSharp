@@ -71,5 +71,6 @@ internal class Program
         Memento.Run();
         Observer.Run();
         State.Run();
+        Strategy.Run();
     }
 }
